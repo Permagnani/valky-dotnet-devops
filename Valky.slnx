@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Valky.Api/Valky.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Valky.Tests/Valky.Tests.csproj" />
+  </Folder>
+</Solution>
