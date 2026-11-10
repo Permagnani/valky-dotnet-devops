@@ -1,0 +1,88 @@
+# =====================================================================
+# Valky - Pipeline de Build (CI)
+# Roda automaticamente a cada commit na main. Como a main é protegida
+# por políticas de branch, o único jeito de chegar commit nela é via
+# Pull Request: o build é acionado somente após o merge do PR.
+# =====================================================================
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: 'Release'
+  dotnetVersion: '10.0.x'
+  apiProject: 'src/Valky.Api/Valky.Api.csproj'
+  testProject: 'tests/Valky.Tests/Valky.Tests.csproj'
+
+stages:
+  - stage: Build
+    displayName: 'Build, Testes e Artefato'
+    jobs:
+      - job: BuildJob
+        displayName: 'Build da Valky API'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Instalar .NET SDK $(dotnetVersion)'
+            inputs:
+              packageType: 'sdk'
+              version: '$(dotnetVersion)'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Restore'
+            inputs:
+              command: 'restore'
+              projects: |
+                $(apiProject)
+                $(testProject)
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Build'
+            inputs:
+              command: 'build'
+              projects: |
+                $(apiProject)
+                $(testProject)
+              arguments: '--configuration $(buildConfiguration) --no-restore'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Testes automatizados (xUnit)'
+            inputs:
+              command: 'test'
+              projects: '$(testProject)'
+              arguments: '--configuration $(buildConfiguration) --no-build --collect "XPlat Code Coverage"'
+              publishTestResults: true
+
+          - task: PublishCodeCoverageResults@2
+            displayName: 'Publicar cobertura de testes'
+            inputs:
+              summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+          - task: DotNetCoreCLI@2
+            displayName: 'Publish da API (pacote .zip)'
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: '$(apiProject)'
+              arguments: '--configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/app'
+              zipAfterPublish: true
+
+          - task: CopyFiles@2
+            displayName: 'Copiar script-bd.sql para o artefato'
+            inputs:
+              SourceFolder: 'scripts'
+              Contents: '*.sql'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)/scripts'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publicar artefato (drop)'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
