@@ -12,8 +12,10 @@ trigger:
 
 pr: none
 
+# Agente self-hosted (pool Default). Assinaturas Azure for Students
+# não podem habilitar o paralelismo gratuito do agente hospedado pela Microsoft.
 pool:
-  vmImage: ubuntu-latest
+  name: Default
 
 variables:
   buildConfiguration: 'Release'
