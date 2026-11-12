@@ -18,18 +18,49 @@ Esta API (.NET 10, Minimal API, EF Core, Azure SQL) recebe os **alertas** e o **
 
 ODS: 11 (cidades e comunidades sustentáveis), 10 (redução das desigualdades), 3 (saúde e bem-estar).
 
+## Links
+
+| | |
+|---|---|
+| API em produção | https://app-valky-rm564995.azurewebsites.net |
+| Swagger | https://app-valky-rm564995.azurewebsites.net/swagger |
+| Health check | https://app-valky-rm564995.azurewebsites.net/health |
+| Azure DevOps (projeto) | https://dev.azure.com/RM564995/valky-devops |
+| Vídeo de demonstração | _link do YouTube_ |
+
 ## Arquitetura macro
 
-> TODO: inserir o desenho em `docs/arquitetura.png`
+![Arquitetura macro da Valky](docs/arquitetura-valky.drawio.png)
 
-![Arquitetura](docs/arquitetura.png)
+Fonte editável: [`docs/arquitetura.drawio`](docs/arquitetura.drawio) (abrir em app.diagrams.net).
 
-Fluxo: Azure Boards (tarefa) → Azure Repos (branch + PR com políticas) → Azure Pipelines CI (build + testes xUnit + artefato) → Release (executa `script-bd.sql` no Azure SQL e faz deploy no Azure App Service) → App mobile consome a API.
+1. O desenvolvedor cria a Task no Azure Boards.
+2. Faz push da branch `feature/task-N` e abre um Pull Request vinculado à Task.
+3. O merge na `main` (protegida: revisor e work item obrigatórios) dispara a pipeline de CI.
+4. O job roda no agente self-hosted `PC-GUSTAVO` (pool Default).
+5. A CI compila, executa os testes xUnit e publica o artefato `drop` (pacote da API + `script-bd.sql`).
+6. O novo artefato dispara automaticamente a Release `valky-CD`.
+7. A Release executa o `script-bd.sql` no Azure SQL Database.
+8. A Release publica o `Valky.Api.zip` no Azure App Service.
+9. O app mobile consome a API via HTTPS.
+10. A API grava e lê os dados no Azure SQL Database.
+
+## CI/CD (Azure DevOps)
+
+- **Azure Boards:** cada mudança nasce de uma Task; commits usam `#N` para vincular.
+- **Azure Repos:** branch `main` protegida (mínimo 1 revisor, work item obrigatório, revisor padrão). Branches no padrão `feature/task-N`.
+- **CI (`azure-pipeline.yml`):** dispara só na `main` (após merge do PR). Etapas: instalar .NET 10, restore, build, testes xUnit (com publicação dos resultados e da cobertura), publish da API em `.zip`, cópia do `script-bd.sql` e publicação do artefato `drop`.
+- **Release (`valky-CD`):** gatilho de deploy contínuo no artefato da `main`. Etapas: executar `script-bd.sql` no Azure SQL e fazer o deploy no App Service. Usa variáveis de pipeline; a senha do banco é uma variável secreta.
+- **Agente:** self-hosted (`PC-GUSTAVO`, pool Default), pois assinaturas Azure for Students não liberam o paralelismo gratuito hospedado pela Microsoft.
+- **Service connection:** `sc-azure-valky` (Azure Resource Manager, escopo do Resource Group `rg-valky`).
 
 ## Estrutura do repositório
 
 ```
 ├── azure-pipeline.yml        # Pipeline de Build (CI)
+├── docs/
+│   ├── arquitetura-valky.drawio.png  # Desenho da arquitetura macro
+│   └── arquitetura.drawio    # Fonte editável (Draw.io)
 ├── scripts/
 │   ├── infra-azure.sh        # Provisionamento via Azure CLI
 │   └── script-bd.sql         # DDL das tabelas (Azure SQL)
@@ -42,13 +73,25 @@ Fluxo: Azure Boards (tarefa) → Azure Repos (branch + PR com políticas) → Az
 No Azure Cloud Shell (Bash):
 
 ```bash
-git clone <url-do-azure-repos>
+git clone https://dev.azure.com/RM564995/valky-devops/_git/valky-devops
 cd valky-devops
+az account set --subscription <id-da-assinatura>
+sed -i 's/\r$//' scripts/infra-azure.sh
 chmod +x scripts/infra-azure.sh
 ./scripts/infra-azure.sh
 ```
 
-Recursos criados: Resource Group `rg-valky`, Azure SQL Server + Database `valkydb`, App Service Plan Linux e Web App `.NET 10`. A senha do banco é pedida na execução e fica apenas na configuração do Web App (connection string `DefaultConnection`), nunca no código.
+Recursos criados em `canadacentral` (região permitida pela assinatura Azure for Students):
+
+| Recurso | Nome |
+|---|---|
+| Resource Group | `rg-valky` |
+| Azure SQL Server | `sql-valky-rm564995` |
+| Azure SQL Database (Basic) | `valkydb` |
+| App Service Plan (Linux, F1) | `plan-valky` |
+| Web App (.NET 10) | `app-valky-rm564995` |
+
+O script também registra os provedores `Microsoft.Sql` e `Microsoft.Web`. A senha do banco é pedida na execução e fica apenas na configuração do Web App (connection string `DefaultConnection`) e como variável secreta da Release, nunca no código.
 
 ## Tabelas
 
