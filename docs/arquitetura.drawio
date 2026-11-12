@@ -1,0 +1,157 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="valky-arquitetura" name="Arquitetura Macro">
+    <mxGraphModel dx="1241" dy="677" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1820" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="titulo" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;" value="&lt;b&gt;Valky — Arquitetura Macro (Azure DevOps + Microsoft Azure)&lt;/b&gt;&lt;br&gt;Global Solution 2026/2 · CitizenTech · Grupo Valky · 2TDSPV" vertex="1">
+          <mxGeometry height="50" width="900" x="40" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="boxDev" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontStyle=1;fontSize=14;arcSize=4;" value="Equipe de desenvolvimento" vertex="1">
+          <mxGeometry height="470" width="210" x="40" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="boxDevOps" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;fontStyle=1;fontSize=14;arcSize=3;" value="Azure DevOps — organização RM564995 · projeto valky-devops (privado)" vertex="1">
+          <mxGeometry height="470" width="760" x="290" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="boxAzure" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;fontStyle=1;fontSize=14;arcSize=4;" value="Microsoft Azure — Azure for Students&lt;br&gt;Resource Group rg-valky (canadacentral)" vertex="1">
+          <mxGeometry height="470" width="430" x="1090" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="boxUsers" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;fontStyle=1;fontSize=14;arcSize=4;" value="Cidadãos (usuários)" vertex="1">
+          <mxGeometry height="470" width="220" x="1560" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="dev" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Desenvolvedores&lt;br&gt;(Gustavo · Enzo)&lt;br&gt;VS Code + Git" vertex="1">
+          <mxGeometry height="70" width="40" x="120" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="github" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#333333;dashed=1;fontSize=11;" value="&lt;b&gt;GitHub&lt;/b&gt;&lt;br&gt;valky-dotnet-devops&lt;br&gt;(cópia para a entrega de .NET)" vertex="1">
+          <mxGeometry height="70" width="180" x="55" y="430" as="geometry" />
+        </mxCell>
+        <mxCell id="boards" parent="1" style="image;html=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTAiIGZpbGw9IiMwRTlGNkUiLz48cmVjdCB4PSIxMCIgeT0iMTIiIHdpZHRoPSIxMiIgaGVpZ2h0PSI0MCIgcng9IjIiIGZpbGw9IiNmZmYiIG9wYWNpdHk9Ii4zNSIvPjxyZWN0IHg9IjI2IiB5PSIxMiIgd2lkdGg9IjEyIiBoZWlnaHQ9IjQwIiByeD0iMiIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iLjM1Ii8+PHJlY3QgeD0iNDIiIHk9IjEyIiB3aWR0aD0iMTIiIGhlaWdodD0iNDAiIHJ4PSIyIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIuMzUiLz48cmVjdCB4PSIxMSIgeT0iMTUiIHdpZHRoPSIxMCIgaGVpZ2h0PSI4IiByeD0iMS41IiBmaWxsPSIjZmZmIi8+PHJlY3QgeD0iMTEiIHk9IjI2IiB3aWR0aD0iMTAiIGhlaWdodD0iOCIgcng9IjEuNSIgZmlsbD0iI2ZmZiIvPjxyZWN0IHg9IjI3IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjgiIHJ4PSIxLjUiIGZpbGw9IiNmZmYiLz48cmVjdCB4PSI0MyIgeT0iMTUiIHdpZHRoPSIxMCIgaGVpZ2h0PSI4IiByeD0iMS41IiBmaWxsPSIjZmZmIi8+PHJlY3QgeD0iNDMiIHk9IjI2IiB3aWR0aD0iMTAiIGhlaWdodD0iOCIgcng9IjEuNSIgZmlsbD0iI2ZmZiIvPjxyZWN0IHg9IjQzIiB5PSIzNyIgd2lkdGg9IjEwIiBoZWlnaHQ9IjgiIHJ4PSIxLjUiIGZpbGw9IiNmZmYiLz48L3N2Zz4=;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fontSize=11;" value="&lt;b&gt;Azure Boards&lt;/b&gt;&lt;br&gt;Tasks vinculadas a&lt;br&gt;commits, branches e PRs" vertex="1">
+          <mxGeometry height="56" width="56" x="330" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="repos" parent="1" style="image;html=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTAiIGZpbGw9IiNFODU5MEMiLz48cGF0aCBkPSJNMjIgMTQgVjUwIE0yMiAzMCBDMjIgNDAgNDIgMzQgNDIgMjQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSIyMiIgY3k9IjE0IiByPSI1IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMjIiIGN5PSI1MCIgcj0iNSIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjQyIiBjeT0iMjIiIHI9IjUiIGZpbGw9IiNmZmYiLz48L3N2Zz4=;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fontSize=11;" value="&lt;b&gt;Azure Repos&lt;/b&gt;&lt;br&gt;main protegida:&lt;br&gt;PR + revisor obrigatório&lt;br&gt;+ work item obrigatório" vertex="1">
+          <mxGeometry height="56" width="56" x="330" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="ci" parent="1" style="image;html=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTAiIGZpbGw9IiMxRjZGRUIiLz48cGF0aCBkPSJNMzIgMTAgQzQyIDE2IDQ0IDMwIDQwIDQyIEgyNCBDMjAgMzAgMjIgMTYgMzIgMTAgWiIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjMyIiBjeT0iMjYiIHI9IjQiIGZpbGw9IiMxRjZGRUIiLz48cGF0aCBkPSJNMjQgMzYgTDE2IDQ2IEwyNCA0NCBaIE00MCAzNiBMNDggNDYgTDQwIDQ0IFoiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNMjggNDQgTDMyIDU0IEwzNiA0NCBaIiBmaWxsPSIjRkZCMDIwIi8+PC9zdmc+;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fontSize=11;" value="&lt;b&gt;Pipeline CI (YAML)&lt;/b&gt;&lt;br&gt;azure-pipeline.yml&lt;br&gt;restore · build ·&lt;br&gt;testes xUnit · publish" vertex="1">
+          <mxGeometry height="56" width="56" x="560" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="artifact" parent="1" style="image;html=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiByeD0iMTAiIGZpbGw9IiNCNDAwOUUiLz48cGF0aCBkPSJNMzIgMTIgTDUwIDIxIFY0MyBMMzIgNTIgTDE0IDQzIFYyMSBaIiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTE0IDIxIEwzMiAzMCBMNTAgMjEgTTMyIDMwIFY1MiIgc3Ryb2tlPSIjQjQwMDlFIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48L3N2Zz4=;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fontSize=11;" value="&lt;b&gt;Artefato drop&lt;/b&gt;&lt;br&gt;Valky.Api.zip&lt;br&gt;+ script-bd.sql" vertex="1">
+          <mxGeometry height="56" width="56" x="800" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="release" parent="1" style="image;html=1;image=img/lib/azure2/devops/Azure_DevOps.svg;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;spacingRight=6;fontSize=11;" value="&lt;b&gt;Release valky-CD&lt;/b&gt;&lt;br&gt;stage Producao&lt;br&gt;variáveis + senha secreta" vertex="1">
+          <mxGeometry height="56" width="56" x="800" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="agent" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;Agente self-hosted&lt;/b&gt;&lt;br&gt;PC-GUSTAVO · pool Default&lt;br&gt;executa a CI e a Release" vertex="1">
+          <mxGeometry height="70" width="220" x="480" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="appservice" parent="1" style="image;html=1;image=img/lib/azure2/app_services/App_Services.svg;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fontSize=11;" value="&lt;b&gt;Azure App Service&lt;/b&gt; (Linux · F1)&lt;br&gt;app-valky-rm564995&lt;br&gt;API .NET 10 (Minimal API)&lt;br&gt;/swagger · /health" vertex="1">
+          <mxGeometry height="60" width="60" x="1275" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="sql" parent="1" style="image;html=1;image=img/lib/azure2/databases/SQL_Database.svg;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;fontSize=11;" value="&lt;b&gt;Azure SQL Database&lt;/b&gt; (Basic)&lt;br&gt;sql-valky-rm564995 / valkydb&lt;br&gt;tabelas Alertas e AtualizacoesStatus" vertex="1">
+          <mxGeometry height="66" width="50" x="1280" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="mobile" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;App Mobile&lt;/b&gt;&lt;br&gt;React Native / Expo&lt;br&gt;(disfarçado de calculadora)" vertex="1">
+          <mxGeometry height="70" width="160" x="1590" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="users" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;whiteSpace=wrap;" value="Usuária · Contato de confiança · Polícia" vertex="1">
+          <mxGeometry height="70" width="40" x="1650" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="dev" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;strokeColor=#6c8ebf;fontSize=11;labelBackgroundColor=#ffffff;" target="boards" value="1. cria a Task">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="dev" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;strokeColor=#6c8ebf;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="repos" value="2. push da branch feature/task-N&lt;br&gt;+ Pull Request (#N)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="145" y="328" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="repos" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;strokeColor=#9673a6;fontSize=11;labelBackgroundColor=#ffffff;" target="ci" value="3. merge na main&lt;br&gt;dispara a CI">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="ci" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;dashed=1;strokeColor=#d6b656;fontSize=11;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="agent" value="4. job executa&lt;br&gt;no agente">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="55" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="ci" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;strokeColor=#9673a6;fontSize=11;labelBackgroundColor=#ffffff;" target="artifact" value="5. publica&lt;br&gt;o artefato">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="artifact" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;strokeColor=#9673a6;fontSize=11;labelBackgroundColor=#ffffff;" target="release" value="6. novo artefato&lt;br&gt;dispara a Release">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="40" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="release" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;strokeColor=#82b366;fontSize=11;labelBackgroundColor=#ffffff;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="sql" value="7. executa script-bd.sql&lt;br&gt;(service connection sc-azure-valky)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="162" />
+              <mxPoint x="980" y="393" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="release" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;strokeColor=#82b366;fontSize=11;labelBackgroundColor=#ffffff;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="appservice" value="8. deploy do Valky.Api.zip">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="134" />
+              <mxPoint x="1100" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="mobile" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;dashed=1;dashPattern=1 3;strokeColor=#b85450;fontSize=11;labelBackgroundColor=#ffffff;" target="appservice" value="9. HTTPS / JSON&lt;br&gt;(CRUD + autenticação)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="appservice" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;dashed=1;dashPattern=1 3;strokeColor=#b85450;fontSize=11;labelBackgroundColor=#ffffff;" target="sql" value="10. EF Core&lt;br&gt;(connection string em&lt;br&gt;variável de ambiente)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=2;dashed=1;dashPattern=1 3;strokeColor=#b85450;fontSize=11;labelBackgroundColor=#ffffff;" target="mobile" value="usa o app">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="repos" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeWidth=1;dashed=1;strokeColor=#333333;fontSize=10;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="github" value="cópia&lt;br&gt;(git push github main)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="358" y="465" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legenda" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=10;fontSize=13;arcSize=4;" value="&lt;b&gt;Legenda&lt;/b&gt;" vertex="1">
+          <mxGeometry height="200" width="560" x="40" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="lg1a" edge="1" parent="1" style="endArrow=block;html=1;strokeWidth=2;strokeColor=#9673a6;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="60" y="625" as="sourcePoint" />
+            <mxPoint x="130" y="625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lg1b" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;" value="Fluxo automático de CI/CD (Azure DevOps → Azure)" vertex="1">
+          <mxGeometry height="24" width="440" x="140" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="lg2a" edge="1" parent="1" style="endArrow=block;html=1;strokeWidth=2;dashed=1;dashPattern=1 3;strokeColor=#b85450;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="60" y="655" as="sourcePoint" />
+            <mxPoint x="130" y="655" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lg2b" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;" value="Uso da solução em produção (app → API → banco)" vertex="1">
+          <mxGeometry height="24" width="440" x="140" y="643" as="geometry" />
+        </mxCell>
+        <mxCell id="lg3a" edge="1" parent="1" style="endArrow=block;html=1;strokeWidth=2;dashed=1;strokeColor=#d6b656;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="60" y="685" as="sourcePoint" />
+            <mxPoint x="130" y="685" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lg3b" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;" value="Execução dos jobs no agente self-hosted / cópia para o GitHub" vertex="1">
+          <mxGeometry height="24" width="440" x="140" y="673" as="geometry" />
+        </mxCell>
+        <mxCell id="lg4" parent="1" style="text;html=1;align=left;verticalAlign=top;fontSize=11;whiteSpace=wrap;" value="Roxo: Azure DevOps · Verde: Microsoft Azure · Vermelho: usuários · Amarelo: agente self-hosted · Cinza: equipe&lt;br&gt;Senha do SQL: variável secreta na Release e configuração do App Service (nunca no código)" vertex="1">
+          <mxGeometry height="60" width="530" x="60" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="passos" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontSize=11;arcSize=3;" value="&lt;b&gt;Fluxo&lt;/b&gt;&lt;br&gt;1. O desenvolvedor cria a Task no Azure Boards.&lt;br&gt;2. Faz push da branch feature/task-N e abre um Pull Request vinculado à Task (revisor e work item obrigatórios).&lt;br&gt;3. O merge na main dispara a pipeline de CI (azure-pipeline.yml).&lt;br&gt;4. O job roda no agente self-hosted PC-GUSTAVO (pool Default).&lt;br&gt;5. A CI compila, executa os testes xUnit e publica o artefato drop (pacote da API + script-bd.sql).&lt;br&gt;6. O novo artefato dispara automaticamente a Release valky-CD.&lt;br&gt;7. A Release executa o script-bd.sql no Azure SQL Database (DDL idempotente).&lt;br&gt;8. A Release publica o Valky.Api.zip no Azure App Service.&lt;br&gt;9. O app mobile consome a API via HTTPS.&lt;br&gt;10. A API grava e lê os dados no Azure SQL Database.&lt;br&gt;Infraestrutura criada pelo script Azure CLI scripts/infra-azure.sh." vertex="1">
+          <mxGeometry height="200" width="880" x="640" y="580" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
