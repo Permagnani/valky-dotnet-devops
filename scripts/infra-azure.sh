@@ -15,14 +15,18 @@
 set -euo pipefail
 
 # ---------- Variáveis (podem ser sobrescritas por variáveis de ambiente) ----------
+# Regiões: a assinatura Azure for Students só permite southcentralus, eastus, eastus2,
+# canadacentral e chilecentral (policy "Allowed resource deployment regions").
+# SKU: Azure for Students não tem cota de B1; F1 (gratuito) é limitado a 1 plano por região.
 RM="${RM:-rm564995}"
-LOCATION="${LOCATION:-brazilsouth}"
+LOCATION="${LOCATION:-canadacentral}"
+APP_LOCATION="${APP_LOCATION:-$LOCATION}"
 RESOURCE_GROUP="${RESOURCE_GROUP:-rg-valky}"
 SQL_SERVER="${SQL_SERVER:-sql-valky-${RM}}"
 SQL_DATABASE="${SQL_DATABASE:-valkydb}"
 SQL_ADMIN="${SQL_ADMIN:-valkyadmin}"
 APP_PLAN="${APP_PLAN:-plan-valky}"
-APP_SKU="${APP_SKU:-B1}"
+APP_SKU="${APP_SKU:-F1}"
 WEBAPP="${WEBAPP:-app-valky-${RM}}"
 RUNTIME="${RUNTIME:-DOTNETCORE:10.0}"
 
@@ -33,6 +37,11 @@ fi
 
 echo ">> Assinatura em uso:"
 az account show --query "{assinatura:name, id:id}" -o table
+
+# ---------- 0. Registro dos provedores (necessário em assinaturas novas) ----------
+echo ">> [0/6] Registrando provedores Microsoft.Sql e Microsoft.Web..."
+az provider register --namespace Microsoft.Sql --wait
+az provider register --namespace Microsoft.Web --wait
 
 # ---------- 1. Resource Group ----------
 echo ">> [1/6] Criando Resource Group ${RESOURCE_GROUP} em ${LOCATION}..."
@@ -68,11 +77,11 @@ az sql db create \
   -o none
 
 # ---------- 4. App Service Plan ----------
-echo ">> [4/6] Criando App Service Plan ${APP_PLAN} (${APP_SKU}, Linux)..."
+echo ">> [4/6] Criando App Service Plan ${APP_PLAN} (${APP_SKU}, Linux) em ${APP_LOCATION}..."
 az appservice plan create \
   --resource-group "$RESOURCE_GROUP" \
   --name "$APP_PLAN" \
-  --location "$LOCATION" \
+  --location "$APP_LOCATION" \
   --is-linux \
   --sku "$APP_SKU" \
   -o none
@@ -109,11 +118,11 @@ fi
 
 echo
 echo "================ RECURSOS CRIADOS ================"
-echo "Resource Group : ${RESOURCE_GROUP}"
-echo "SQL Server     : ${SQL_SERVER}.database.windows.net"
+echo "Resource Group : ${RESOURCE_GROUP} (${LOCATION})"
+echo "SQL Server     : ${SQL_SERVER}.database.windows.net (${LOCATION})"
 echo "Database       : ${SQL_DATABASE}"
 echo "SQL Admin      : ${SQL_ADMIN}"
-echo "App Plan       : ${APP_PLAN} (${APP_SKU})"
+echo "App Plan       : ${APP_PLAN} (${APP_SKU}, ${APP_LOCATION})"
 echo "Web App        : https://${WEBAPP}.azurewebsites.net"
 echo "Swagger        : https://${WEBAPP}.azurewebsites.net/swagger"
 echo "=================================================="
