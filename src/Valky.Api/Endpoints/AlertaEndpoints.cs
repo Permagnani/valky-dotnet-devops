@@ -28,7 +28,7 @@ public static class AlertaEndpoints
         {
             var erros = RegrasAlerta.ValidarAlerta(req.CodigoBo, req.Latitude, req.Longitude, req.Status);
             if (erros.Count > 0)
-                return Results.ValidationProblem(new Dictionary<string, string[]> { ["erros"] = erros.ToArray() });
+                return RespostasHttp.ErroDeValidacao(erros);
 
             var agora = DateTime.UtcNow;
             var alerta = new Alerta
@@ -53,7 +53,7 @@ public static class AlertaEndpoints
 
             var erros = RegrasAlerta.ValidarAlerta(req.CodigoBo, req.Latitude, req.Longitude, req.Status);
             if (erros.Count > 0)
-                return Results.ValidationProblem(new Dictionary<string, string[]> { ["erros"] = erros.ToArray() });
+                return RespostasHttp.ErroDeValidacao(erros);
 
             alerta.CodigoBo = req.CodigoBo!.Trim();
             alerta.Latitude = req.Latitude;
