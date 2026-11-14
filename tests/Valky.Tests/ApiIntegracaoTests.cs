@@ -2,15 +2,35 @@ using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Valky.Api.Contracts;
+using Valky.Api.Data;
 using Valky.Api.Models;
 
 namespace Valky.Tests;
 
-/// <summary>Sobe a API em memória (ambiente "Testing", banco InMemory) para os testes de integração.</summary>
+/// <summary>
+/// Sobe a API em memória para os testes de integração. O registro do SQL Server feito
+/// pela API é substituído pelo provedor InMemory do EF Core, que existe apenas neste
+/// projeto de testes (a API de produção não conhece esse provedor).
+/// </summary>
 public class ValkyApiFactory : WebApplicationFactory<Program>
 {
-    protected override void ConfigureWebHost(IWebHostBuilder builder) => builder.UseEnvironment("Testing");
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.UseEnvironment("Testing");
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<DbContextOptions<AppDbContext>>();
+            services.RemoveAll<IDbContextOptionsConfiguration<AppDbContext>>();
+            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("ValkyTestes"));
+        });
+    }
 }
 
 public class ApiIntegracaoTests(ValkyApiFactory factory) : IClassFixture<ValkyApiFactory>

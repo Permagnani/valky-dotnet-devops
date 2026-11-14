@@ -19,6 +19,17 @@
           "Microsoft.Extensions.Hosting": "10.0.15"
         }
       },
+      "Microsoft.EntityFrameworkCore.InMemory": {
+        "type": "Direct",
+        "requested": "[10.0.15, )",
+        "resolved": "10.0.15",
+        "contentHash": "gUn1xV1AR+dum+f4unK4G48rkScxxt9TSkYsu6B2NWPCMJJjo0nMD64z9Xb5Cd7L+SVBtdrwaexao6PhS+704w==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "10.0.15",
+          "Microsoft.Extensions.Caching.Memory": "10.0.15",
+          "Microsoft.Extensions.Logging": "10.0.15"
+        }
+      },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[17.14.2, )",
@@ -125,16 +136,6 @@
         "type": "Transitive",
         "resolved": "10.0.15",
         "contentHash": "13C007jEmO1JVsoJ+Vvn0AzOaR5bpGsDsaOB9nQt6denQR8hmv1eWmQ0qGarvz+1Zu5b511uF74A90BQigdYHA=="
-      },
-      "Microsoft.EntityFrameworkCore.InMemory": {
-        "type": "Transitive",
-        "resolved": "10.0.15",
-        "contentHash": "gUn1xV1AR+dum+f4unK4G48rkScxxt9TSkYsu6B2NWPCMJJjo0nMD64z9Xb5Cd7L+SVBtdrwaexao6PhS+704w==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.15",
-          "Microsoft.Extensions.Caching.Memory": "10.0.15",
-          "Microsoft.Extensions.Logging": "10.0.15"
-        }
       },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Transitive",
@@ -723,7 +724,6 @@
       "valky.api": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.InMemory": "[10.0.15, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.15, )",
           "Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore": "[10.0.15, )",
           "Swashbuckle.AspNetCore": "[9.0.6, )"
