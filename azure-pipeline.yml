@@ -1,9 +1,4 @@
-# =====================================================================
-# Valky - Pipeline de Build (CI)
-# Roda automaticamente a cada commit na main. Como a main é protegida
-# por políticas de branch, o único jeito de chegar commit nela é via
-# Pull Request: o build é acionado somente após o merge do PR.
-# =====================================================================
+
 
 trigger:
   branches:
@@ -12,14 +7,12 @@ trigger:
 
 pr: none
 
-# Agente self-hosted (pool Default). Assinaturas Azure for Students
-# não podem habilitar o paralelismo gratuito do agente hospedado pela Microsoft.
+
 pool:
   name: Default
 
 variables:
   buildConfiguration: 'Release'
-  dotnetVersion: '10.0.x'
   apiProject: 'src/Valky.Api/Valky.Api.csproj'
   testProject: 'tests/Valky.Tests/Valky.Tests.csproj'
 
@@ -31,10 +24,10 @@ stages:
         displayName: 'Build da Valky API'
         steps:
           - task: UseDotNet@2
-            displayName: 'Instalar .NET SDK $(dotnetVersion)'
+            displayName: 'Instalar .NET SDK (versão fixada no global.json)'
             inputs:
               packageType: 'sdk'
-              version: '$(dotnetVersion)'
+              useGlobalJson: true
 
           - task: DotNetCoreCLI@2
             displayName: 'Restore'
