@@ -31,7 +31,7 @@ public static class AtualizacaoStatusEndpoints
         {
             var erros = RegrasAlerta.ValidarAtualizacao(req.Status, req.Responsavel, req.Observacao);
             if (erros.Count > 0)
-                return Results.ValidationProblem(new Dictionary<string, string[]> { ["erros"] = erros.ToArray() });
+                return RespostasHttp.ErroDeValidacao(erros);
 
             var alerta = await db.Alertas.FindAsync(req.AlertaId);
             if (alerta is null)
@@ -66,7 +66,7 @@ public static class AtualizacaoStatusEndpoints
 
             var erros = RegrasAlerta.ValidarAtualizacao(req.Status, req.Responsavel, req.Observacao);
             if (erros.Count > 0)
-                return Results.ValidationProblem(new Dictionary<string, string[]> { ["erros"] = erros.ToArray() });
+                return RespostasHttp.ErroDeValidacao(erros);
 
             item.Status = req.Status!;
             item.Observacao = req.Observacao;
