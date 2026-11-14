@@ -51,6 +51,7 @@ Fonte editável: [`docs/arquitetura.drawio`](docs/arquitetura.drawio) (abrir em 
 - **Azure Repos:** branch `main` protegida (mínimo 1 revisor, work item obrigatório, revisor padrão). Branches no padrão `feature/task-N`.
 - **CI (`azure-pipeline.yml`):** dispara só na `main` (após merge do PR). Etapas: instalar .NET 10, restore, build, testes xUnit (com publicação dos resultados e da cobertura), publish da API em `.zip`, cópia do `script-bd.sql` e publicação do artefato `drop`.
 - **Release (`valky-CD`):** gatilho de deploy contínuo no artefato da `main`. Etapas: executar `script-bd.sql` no Azure SQL e fazer o deploy no App Service. Usa variáveis de pipeline; a senha do banco é uma variável secreta.
+- **Versões fixas:** SDK do .NET fixado em `10.0.103` pelo `global.json` (a CI usa a mesma versão com `useGlobalJson`); pacotes NuGet com versões exatas e lock files (`packages.lock.json`), restaurados em modo bloqueado na CI.
 - **Agente:** self-hosted (`PC-GUSTAVO`, pool Default), pois assinaturas Azure for Students não liberam o paralelismo gratuito hospedado pela Microsoft.
 - **Service connection:** `sc-azure-valky` (Azure Resource Manager, escopo do Resource Group `rg-valky`).
 
@@ -58,14 +59,15 @@ Fonte editável: [`docs/arquitetura.drawio`](docs/arquitetura.drawio) (abrir em 
 
 ```
 ├── azure-pipeline.yml        # Pipeline de Build (CI)
+├── global.json               # Versão fixa do SDK .NET
 ├── docs/
 │   ├── arquitetura-valky.drawio.png  # Desenho da arquitetura macro
 │   └── arquitetura.drawio    # Fonte editável (Draw.io)
 ├── scripts/
 │   ├── infra-azure.sh        # Provisionamento via Azure CLI
 │   └── script-bd.sql         # DDL das tabelas (Azure SQL)
-├── src/Valky.Api/            # Minimal API
-└── tests/Valky.Tests/        # Testes unitários e de integração (xUnit)
+├── src/Valky.Api/            # Minimal API (+ packages.lock.json)
+└── tests/Valky.Tests/        # Testes unitários e de integração xUnit (+ packages.lock.json)
 ```
 
 ## Infraestrutura (Azure CLI)
@@ -102,7 +104,7 @@ Status válidos: `ABERTO`, `VIATURA_A_CAMINHO`, `NO_LOCAL`, `ENCERRADO`.
 
 ## Endpoints e JSON do CRUD
 
-Swagger: `https://<webapp>.azurewebsites.net/swagger` · Health check: `/health`
+URLs do Swagger e do health check: ver a seção [Links](#links).
 
 ### Alertas — `/api/alertas`
 
@@ -176,6 +178,8 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<sua-connection-s
 dotnet run --project src/Valky.Api
 dotnet test tests/Valky.Tests
 ```
+
+Os testes de integração não precisam de banco: a `WebApplicationFactory` substitui o SQL Server pelo provedor EF Core InMemory.
 
 ## Declaração de uso de IA generativa
 
