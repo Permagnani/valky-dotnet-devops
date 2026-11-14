@@ -7,12 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // A connection string NUNCA fica no código: em produção vem da configuração do App Service
 // (Connection strings > DefaultConnection), criada pelo scripts/infra-azure.sh.
 builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    if (builder.Environment.IsEnvironment("Testing"))
-        options.UseInMemoryDatabase("ValkyTestes");
-    else
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
