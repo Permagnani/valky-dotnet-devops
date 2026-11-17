@@ -14,9 +14,8 @@ using Valky.Api.Models;
 namespace Valky.Tests;
 
 /// <summary>
-/// Sobe a API em memória para os testes de integração. O registro do SQL Server feito
-/// pela API é substituído pelo provedor InMemory do EF Core, que existe apenas neste
-/// projeto de testes (a API de produção não conhece esse provedor).
+/// Sobe a API em memória para os testes de integração, com o banco substituído
+/// pelo provedor InMemory do EF Core.
 /// </summary>
 public class ValkyApiFactory : WebApplicationFactory<Program>
 {

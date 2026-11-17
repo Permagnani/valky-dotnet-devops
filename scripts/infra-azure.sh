@@ -9,15 +9,12 @@
 #   chmod +x scripts/infra-azure.sh
 #   ./scripts/infra-azure.sh
 #
-# A senha do SQL NÃO fica no script: é pedida na execução
-# (ou lida da variável de ambiente SQL_PASSWORD).
+# A senha do SQL é pedida na execução (ou lida da variável de ambiente SQL_PASSWORD).
 # =====================================================================
 set -euo pipefail
 
 # ---------- Variáveis (podem ser sobrescritas por variáveis de ambiente) ----------
-# Regiões: a assinatura Azure for Students só permite southcentralus, eastus, eastus2,
-# canadacentral e chilecentral (policy "Allowed resource deployment regions").
-# SKU: Azure for Students não tem cota de B1; F1 (gratuito) é limitado a 1 plano por região.
+# Região e SKU padrão compatíveis com a assinatura Azure for Students.
 RM="${RM:-rm564995}"
 LOCATION="${LOCATION:-canadacentral}"
 APP_LOCATION="${APP_LOCATION:-$LOCATION}"
@@ -57,7 +54,7 @@ az sql server create \
   --admin-password "$SQL_PASSWORD" \
   -o none
 
-# Permite que serviços do Azure (Web App e agente da Pipeline) acessem o banco
+# Permite que o App Service acesse o banco
 az sql server firewall-rule create \
   --resource-group "$RESOURCE_GROUP" \
   --server "$SQL_SERVER" \
