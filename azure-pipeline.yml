@@ -1,8 +1,6 @@
 # =====================================================================
 # Valky - Pipeline de Build (CI)
-# Roda automaticamente a cada commit na main. Como a main é protegida
-# por políticas de branch, o único jeito de chegar commit nela é via
-# Pull Request: o build é acionado somente após o merge do PR.
+# Roda a cada commit na main (merge de Pull Request).
 # =====================================================================
 
 trigger:
@@ -12,8 +10,7 @@ trigger:
 
 pr: none
 
-# Agente self-hosted (pool Default). Assinaturas Azure for Students
-# não podem habilitar o paralelismo gratuito do agente hospedado pela Microsoft.
+# Agente self-hosted (pool Default).
 pool:
   name: Default
 

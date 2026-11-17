@@ -4,8 +4,7 @@ using Valky.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// A connection string NUNCA fica no código: em produção vem da configuração do App Service
-// (Connection strings > DefaultConnection), criada pelo scripts/infra-azure.sh.
+// Connection string lida da configuração (App Service em produção; user-secrets localmente).
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -18,7 +17,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Versão exibida na raiz: é o que muda na "simulação de alteração no código" do vídeo.
+// Identificação e versão da API.
 app.MapGet("/", () => Results.Ok(new
 {
     aplicacao = "Valky API",

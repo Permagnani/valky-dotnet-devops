@@ -41,7 +41,7 @@ BEGIN
 END;
 GO
 
-/* Consultas usadas no vídeo para comprovar o CRUD direto no banco:
+/* Consultas de verificação:
    SELECT * FROM dbo.Alertas ORDER BY Id DESC;
    SELECT * FROM dbo.AtualizacoesStatus ORDER BY Id DESC;
 */

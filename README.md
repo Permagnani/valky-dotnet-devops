@@ -18,6 +18,22 @@ Esta API (.NET 10, Minimal API, EF Core, Azure SQL) recebe os **alertas** e o **
 
 ODS: 11 (cidades e comunidades sustentáveis), 10 (redução das desigualdades), 3 (saúde e bem-estar).
 
+## Arquitetura macro
+
+![Arquitetura macro da Valky](docs/arquitetura-valky.drawio.png)
+
+Fonte editável: [`docs/arquitetura.drawio`](docs/arquitetura.drawio) (abrir em app.diagrams.net).
+
+1. A equipe cria a Task no Azure Boards.
+2. Faz push da branch `feature/task-N` no Azure Repos e abre o Pull Request vinculado à Task (`#N`).
+3. O merge na `main` dispara a pipeline de CI `valky-CI`.
+4. A CI compila, executa os testes xUnit e publica o artefato.
+5. O artefato `drop` (`Valky.Api.zip` + `script-bd.sql`) dispara a Release `valky-CD`.
+6. A Release executa o `script-bd.sql` no Azure SQL Database `valkydb`.
+7. A Release publica o `Valky.Api.zip` no Azure App Service `app-valky-rm564995`.
+8. O app mobile consome a API por HTTPS, autenticado com JWT.
+9. A API lê e grava os dados no Azure SQL Database via EF Core.
+
 ## Links
 
 | | |
@@ -28,32 +44,16 @@ ODS: 11 (cidades e comunidades sustentáveis), 10 (redução das desigualdades),
 | Azure DevOps (projeto) | https://dev.azure.com/RM564995/valky-devops |
 | Vídeo de demonstração | _link do YouTube_ |
 
-## Arquitetura macro
-
-![Arquitetura macro da Valky](docs/arquitetura-valky.drawio.png)
-
-Fonte editável: [`docs/arquitetura.drawio`](docs/arquitetura.drawio) (abrir em app.diagrams.net).
-
-1. O desenvolvedor cria a Task no Azure Boards.
-2. Faz push da branch `feature/task-N` e abre um Pull Request vinculado à Task.
-3. O merge na `main` (protegida: revisor e work item obrigatórios) dispara a pipeline de CI.
-4. O job roda no agente self-hosted `PC-GUSTAVO` (pool Default).
-5. A CI compila, executa os testes xUnit e publica o artefato `drop` (pacote da API + `script-bd.sql`).
-6. O novo artefato dispara automaticamente a Release `valky-CD`.
-7. A Release executa o `script-bd.sql` no Azure SQL Database.
-8. A Release publica o `Valky.Api.zip` no Azure App Service.
-9. O app mobile consome a API via HTTPS.
-10. A API grava e lê os dados no Azure SQL Database.
-
 ## CI/CD (Azure DevOps)
 
 - **Azure Boards:** cada mudança nasce de uma Task; commits usam `#N` para vincular.
 - **Azure Repos:** branch `main` protegida (mínimo 1 revisor, work item obrigatório, revisor padrão). Branches no padrão `feature/task-N`.
-- **CI (`azure-pipeline.yml`):** dispara só na `main` (após merge do PR). Etapas: instalar .NET 10, restore, build, testes xUnit (com publicação dos resultados e da cobertura), publish da API em `.zip`, cópia do `script-bd.sql` e publicação do artefato `drop`.
+- **CI (`azure-pipeline.yml`):** dispara a cada commit na `main`. Etapas: instalar .NET 10, restore, build, testes xUnit (com publicação dos resultados e da cobertura), publish da API em `.zip`, cópia do `script-bd.sql` e publicação do artefato `drop`.
 - **Release (`valky-CD`):** gatilho de deploy contínuo no artefato da `main`. Etapas: executar `script-bd.sql` no Azure SQL e fazer o deploy no App Service. Usa variáveis de pipeline; a senha do banco é uma variável secreta.
-- **Versões fixas:** SDK do .NET fixado em `10.0.103` pelo `global.json` (a CI usa a mesma versão com `useGlobalJson`); pacotes NuGet com versões exatas e lock files (`packages.lock.json`), restaurados em modo bloqueado na CI.
-- **Agente:** self-hosted (`PC-GUSTAVO`, pool Default), pois assinaturas Azure for Students não liberam o paralelismo gratuito hospedado pela Microsoft.
+- **Versões:** SDK do .NET `10.0.103` (`global.json`); pacotes NuGet com versões exatas e `packages.lock.json`.
+- **Agente:** self-hosted `PC-GUSTAVO` (pool Default).
 - **Service connection:** `sc-azure-valky` (Azure Resource Manager, escopo do Resource Group `rg-valky`).
+- **GitHub:** cópia da `main` para a entrega da disciplina de .NET.
 
 ## Estrutura do repositório
 
@@ -78,12 +78,11 @@ No Azure Cloud Shell (Bash):
 git clone https://dev.azure.com/RM564995/valky-devops/_git/valky-devops
 cd valky-devops
 az account set --subscription <id-da-assinatura>
-sed -i 's/\r$//' scripts/infra-azure.sh
 chmod +x scripts/infra-azure.sh
 ./scripts/infra-azure.sh
 ```
 
-Recursos criados em `canadacentral` (região permitida pela assinatura Azure for Students):
+Recursos criados (região `canadacentral`):
 
 | Recurso | Nome |
 |---|---|
@@ -93,7 +92,7 @@ Recursos criados em `canadacentral` (região permitida pela assinatura Azure for
 | App Service Plan (Linux, F1) | `plan-valky` |
 | Web App (.NET 10) | `app-valky-rm564995` |
 
-O script também registra os provedores `Microsoft.Sql` e `Microsoft.Web`. A senha do banco é pedida na execução e fica apenas na configuração do Web App (connection string `DefaultConnection`) e como variável secreta da Release, nunca no código.
+A senha do banco é informada na execução do script e fica na connection string `DefaultConnection` do Web App e na variável secreta da Release.
 
 ## Tabelas
 
@@ -103,8 +102,6 @@ O script também registra os provedores `Microsoft.Sql` e `Microsoft.Web`. A sen
 Status válidos: `ABERTO`, `VIATURA_A_CAMINHO`, `NO_LOCAL`, `ENCERRADO`.
 
 ## Endpoints e JSON do CRUD
-
-URLs do Swagger e do health check: ver a seção [Links](#links).
 
 ### Alertas — `/api/alertas`
 
@@ -163,7 +160,7 @@ PUT:
 }
 ```
 
-Comprovação no banco (Query Editor do Azure SQL):
+Consultas no banco (Query Editor do Azure SQL):
 ```sql
 SELECT * FROM dbo.Alertas ORDER BY Id DESC;
 SELECT * FROM dbo.AtualizacoesStatus ORDER BY Id DESC;
@@ -172,14 +169,13 @@ SELECT * FROM dbo.AtualizacoesStatus ORDER BY Id DESC;
 ## Rodar localmente
 
 ```bash
-# defina a connection string sem gravá-la no código
 dotnet user-secrets init --project src/Valky.Api
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<sua-connection-string>" --project src/Valky.Api
 dotnet run --project src/Valky.Api
 dotnet test tests/Valky.Tests
 ```
 
-Os testes de integração não precisam de banco: a `WebApplicationFactory` substitui o SQL Server pelo provedor EF Core InMemory.
+Os testes de integração usam a `WebApplicationFactory` com o provedor EF Core InMemory.
 
 ## Declaração de uso de IA generativa
 
