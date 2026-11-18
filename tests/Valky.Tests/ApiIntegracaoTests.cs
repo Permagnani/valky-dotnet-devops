@@ -1,33 +1,30 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Configuration;
 using Valky.Api.Contracts;
-using Valky.Api.Data;
 using Valky.Api.Models;
 
 namespace Valky.Tests;
 
-/// <summary>
-/// Sobe a API em memória para os testes de integração, com o banco substituído
-/// pelo provedor InMemory do EF Core.
-/// </summary>
+/// <summary>Sobe a API em memória (ambiente "Testing", banco InMemory) para os testes funcionais e de integração.</summary>
 public class ValkyApiFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
-
-        builder.ConfigureTestServices(services =>
+        builder.UseSetting("Jwt:ChaveSecreta", "chave-de-teste-valky-somente-para-testes-automatizados");
+        builder.ConfigureAppConfiguration((_, config) =>
         {
-            services.RemoveAll<DbContextOptions<AppDbContext>>();
-            services.RemoveAll<IDbContextOptionsConfiguration<AppDbContext>>();
-            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("ValkyTestes"));
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["RateLimiting:LimiteAutenticacaoPorMinuto"] = "500",
+                ["RateLimiting:LimiteEscritaPorMinuto"] = "500",
+                ["RateLimiting:LimiteLeituraPorMinuto"] = "500",
+                ["RateLimiting:LimiteInfraPorMinuto"] = "500"
+            });
         });
     }
 }
@@ -36,12 +33,59 @@ public class ApiIntegracaoTests(ValkyApiFactory factory) : IClassFixture<ValkyAp
 {
     private readonly HttpClient _client = factory.CreateClient();
 
+    private async Task AutenticarClienteAsync()
+    {
+        if (_client.DefaultRequestHeaders.Authorization is not null)
+            return;
+
+        var email = $"operador.{Guid.NewGuid():N}@valky.com";
+        var resp = await _client.PostAsJsonAsync("/api/auth/registrar", new RegistrarUsuarioRequest(
+            Nome: "Operadora Teste Alerta",
+            Email: email,
+            Cpf: GerarCpfValidoUnico(),
+            Telefone: "11987654321",
+            Senha: "ValkyPassword123",
+            Perfil: PerfilUsuario.Usuaria,
+            CodigoBo: "BO-2026-ALERTA",
+            PinDisfarce: "1901"));
+
+        resp.EnsureSuccessStatusCode();
+        var auth = (await resp.Content.ReadFromJsonAsync<AuthTokenResponse>())!;
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
+    }
+
     private async Task<AlertaResponse> CriarAlertaAsync()
     {
+        await AutenticarClienteAsync();
         var resp = await _client.PostAsJsonAsync("/api/alertas",
             new AlertaRequest("BO-TESTE-001", -23.5505m, -46.6333m, null));
         resp.EnsureSuccessStatusCode();
         return (await resp.Content.ReadFromJsonAsync<AlertaResponse>())!;
+    }
+
+    internal static string GerarCpfValidoUnico()
+    {
+        var random = Random.Shared;
+        var digitos = new int[11];
+        do
+        {
+            for (int i = 0; i < 9; i++)
+                digitos[i] = random.Next(0, 10);
+        } while (digitos.Take(9).Distinct().Count() == 1);
+
+        int soma1 = 0;
+        for (int i = 0; i < 9; i++)
+            soma1 += digitos[i] * (10 - i);
+        int resto1 = (soma1 * 10) % 11;
+        digitos[9] = resto1 == 10 ? 0 : resto1;
+
+        int soma2 = 0;
+        for (int i = 0; i < 10; i++)
+            soma2 += digitos[i] * (11 - i);
+        int resto2 = (soma2 * 10) % 11;
+        digitos[10] = resto2 == 10 ? 0 : resto2;
+
+        return string.Concat(digitos);
     }
 
     [Fact]
@@ -52,15 +96,28 @@ public class ApiIntegracaoTests(ValkyApiFactory factory) : IClassFixture<ValkyAp
     }
 
     [Fact]
-    public async Task HealthCheck_RetornaOk()
+    public async Task HealthCheck_RetornaOk_ComRelatorioJson()
     {
         var resp = await _client.GetAsync("/health");
         Assert.Equal(HttpStatusCode.OK, resp.StatusCode);
+        var conteudo = await resp.Content.ReadAsStringAsync();
+        Assert.Contains("Healthy", conteudo);
+        Assert.Contains("banco-de-dados", conteudo);
+    }
+
+    [Fact]
+    public async Task Alerta_SemTokenJwt_Retorna401()
+    {
+        using var clienteAnonimo = factory.CreateClient();
+        var resp = await clienteAnonimo.GetAsync("/api/alertas");
+        Assert.Equal(HttpStatusCode.Unauthorized, resp.StatusCode);
     }
 
     [Fact]
     public async Task Alerta_CrudCompleto()
     {
+        await AutenticarClienteAsync();
+
         // Create
         var criado = await CriarAlertaAsync();
         Assert.Equal(StatusAlerta.Aberto, criado.Status);
@@ -86,6 +143,7 @@ public class ApiIntegracaoTests(ValkyApiFactory factory) : IClassFixture<ValkyAp
     [Fact]
     public async Task Alerta_Invalido_Retorna400()
     {
+        await AutenticarClienteAsync();
         var resp = await _client.PostAsJsonAsync("/api/alertas", new AlertaRequest("", 200, 0, null));
         Assert.Equal(HttpStatusCode.BadRequest, resp.StatusCode);
     }
@@ -93,6 +151,7 @@ public class ApiIntegracaoTests(ValkyApiFactory factory) : IClassFixture<ValkyAp
     [Fact]
     public async Task Alerta_Inexistente_Retorna404()
     {
+        await AutenticarClienteAsync();
         var resp = await _client.GetAsync("/api/alertas/999999");
         Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
     }
