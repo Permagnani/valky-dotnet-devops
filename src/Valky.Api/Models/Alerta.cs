@@ -1,7 +1,7 @@
 namespace Valky.Api.Models;
 
 /// <summary>
-/// Alerta disparado pela usuária. Tabela: dbo.Alertas
+/// Alerta disparado pela usuária. Tabela: dbo.TB_VALKY_ALERTAS
 /// </summary>
 public class Alerta
 {

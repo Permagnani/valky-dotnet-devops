@@ -85,8 +85,8 @@ public static class SecurityAndSwaggerExtensions
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Valky API — Proteção à Mulher & Central de Emergência",
-                Version = "v1.0.0",
-                Description = "API RESTful (.NET 10, Entity Framework Core, Oracle Database) consumida pelo aplicativo mobile Valky. " +
+                Version = "v2.0.0",
+                Description = "API RESTful (.NET 10 e Entity Framework Core) consumida pelo aplicativo mobile Valky. " +
                               "Inclui Cadastro de Usuárias, Rede de Contatos de Confiança, Autenticação JWT, Rate Limiting por Endpoint, " +
                               "Mapeamento de Erros (RFC 7807 ProblemDetails), HealthChecks e Central de Alertas."
             });

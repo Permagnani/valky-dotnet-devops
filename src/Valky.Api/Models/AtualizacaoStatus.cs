@@ -1,7 +1,7 @@
 namespace Valky.Api.Models;
 
 /// <summary>
-/// Histórico de andamento do atendimento de um alerta. Tabela: dbo.AtualizacoesStatus
+/// Histórico de andamento do atendimento de um alerta. Tabela: dbo.TB_VALKY_ATUALIZACOES_STATUS
 /// </summary>
 public class AtualizacaoStatus
 {
