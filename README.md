@@ -14,9 +14,15 @@
 
 A Valky é um app de proteção para mulheres em risco de violência doméstica. Disfarçado de calculadora, ele permite disparar um alerta silencioso que envia localização e contexto para a polícia, enquanto a rede de confiança acompanha o andamento do atendimento. Ele protege desde o registro do BO, antes da medida protetiva.
 
-Esta API (.NET 10, Minimal API, EF Core, Azure SQL) recebe os **alertas** e o **histórico de status** do atendimento.
+Esta API (.NET 10, Minimal API, EF Core, Azure SQL) centraliza:
+- cadastro de usuárias e da rede de contatos de confiança;
+- autenticação por JWT;
+- central de alertas e histórico de atendimento;
+- rate limiting por política (`autenticacao`, `escrita`, `leitura`, `infraestrutura`);
+- tratamento global de erros no padrão ProblemDetails (RFC 7807);
+- health check da API e do banco (`/health`).
 
-ODS: 11 (cidades e comunidades sustentáveis), 10 (redução das desigualdades), 3 (saúde e bem-estar).
+ODS: 3 (saúde e bem-estar), 5 (igualdade de gênero), 10 (redução das desigualdades) e 11 (cidades e comunidades sustentáveis).
 
 ## Arquitetura macro
 
@@ -58,16 +64,26 @@ Fonte editável: [`docs/arquitetura.drawio`](docs/arquitetura.drawio) (abrir em 
 ## Estrutura do repositório
 
 ```
-├── azure-pipeline.yml        # Pipeline de Build (CI)
-├── global.json               # Versão fixa do SDK .NET
+├── azure-pipeline.yml            # Pipeline de Build (CI)
+├── global.json                   # Versão fixa do SDK .NET
 ├── docs/
 │   ├── arquitetura-valky.drawio.png  # Desenho da arquitetura macro
-│   └── arquitetura.drawio    # Fonte editável (Draw.io)
+│   └── arquitetura.drawio        # Fonte editável (Draw.io)
 ├── scripts/
-│   ├── infra-azure.sh        # Provisionamento via Azure CLI
-│   └── script-bd.sql         # DDL das tabelas (Azure SQL)
-├── src/Valky.Api/            # Minimal API (+ packages.lock.json)
-└── tests/Valky.Tests/        # Testes unitários e de integração xUnit (+ packages.lock.json)
+│   ├── infra-azure.sh            # Provisionamento via Azure CLI
+│   ├── script-bd.sql             # DDL das tabelas (Azure SQL)
+│   └── script-bd-oracle.sql      # DDL equivalente para Oracle
+├── src/Valky.Api/                # Minimal API (+ packages.lock.json)
+│   ├── Configuration/            # JWT, Swagger e rate limiting
+│   ├── Contracts/                # DTOs de request/response
+│   ├── Controller/               # Endpoints (auth, usuários, alertas, status)
+│   ├── Data/                     # AppDbContext (EF Core)
+│   ├── Domain/                   # Regras de negócio
+│   ├── Errors/                   # Exceções de domínio e handler global
+│   ├── Migrations/               # Migrations do EF Core (Oracle)
+│   ├── Models/                   # Entidades
+│   └── Security/                 # Hash de senha e emissão de JWT
+└── tests/Valky.Tests/            # Testes unitários e de integração xUnit (+ packages.lock.json)
 ```
 
 ## Infraestrutura (Azure CLI)
@@ -92,16 +108,96 @@ Recursos criados (região `canadacentral`):
 | App Service Plan (Linux, F1) | `plan-valky` |
 | Web App (.NET 10) | `app-valky-rm564995` |
 
-A senha do banco é informada na execução do script e fica na connection string `DefaultConnection` do Web App e na variável secreta da Release.
+A senha do banco e a chave do JWT são informadas na execução do script. No Web App ficam a connection string `DefaultConnection` e as configurações `DatabaseProvider=SqlServer` e `Jwt__ChaveSecreta`; na Release, a senha do banco é uma variável secreta.
 
-## Tabelas
+## Tabelas (Azure SQL)
 
-- `dbo.Alertas` — alerta disparado pela usuária (BO, localização, status).
-- `dbo.AtualizacoesStatus` — andamento do atendimento (FK para `Alertas`).
+| Tabela | Conteúdo |
+|---|---|
+| `TB_VALKY_USUARIOS` | usuárias, contatos e policiais (CPF e e-mail únicos, hash da senha, BO, PIN da calculadora, permissões do app) |
+| `TB_VALKY_CONTATOS_CONFIANCA` | rede de confiança da usuária (até 5 contatos; FK para usuários) |
+| `TB_VALKY_ALERTAS` | alerta disparado pela usuária (BO, localização, status) |
+| `TB_VALKY_ATUALIZACOES_STATUS` | andamento do atendimento (FK para alertas) |
 
-Status válidos: `ABERTO`, `VIATURA_A_CAMINHO`, `NO_LOCAL`, `ENCERRADO`.
+Status válidos: `ABERTO`, `VIATURA_A_CAMINHO`, `NO_LOCAL`, `ENCERRADO`. Perfis: `USUARIA`, `CONTATO_CONFIANCA`, `POLICIA`.
+
+O provedor é definido por `DatabaseProvider`: `SqlServer` (Azure SQL, produção) ou `Oracle` (`scripts/script-bd-oracle.sql`).
 
 ## Endpoints e JSON do CRUD
+
+Swagger com botão **Authorize** (Bearer JWT): `/swagger`. Exceto cadastro e login, os endpoints exigem token.
+
+### Autenticação — `/api/auth`
+
+| Operação | Método | Rota |
+|---|---|---|
+| Registrar e autenticar | POST | `/api/auth/registrar` |
+| Login (obter JWT) | POST | `/api/auth/login` |
+| Usuário autenticado | GET | `/api/auth/me` |
+
+POST `/api/auth/registrar`:
+```json
+{
+  "nome": "Maria da Silva",
+  "email": "maria@exemplo.com",
+  "cpf": "52998224725",
+  "telefone": "11987654321",
+  "senha": "Valky2026Segura",
+  "perfil": "USUARIA",
+  "codigoBo": "BO-2026-000123",
+  "pinDisfarce": "1901",
+  "possuiMedidaProtetiva": false,
+  "permissaoMicrofone": true,
+  "permissaoLocalizacao": true
+}
+```
+
+POST `/api/auth/login`:
+```json
+{
+  "email": "maria@exemplo.com",
+  "senha": "Valky2026Segura"
+}
+```
+
+### Usuários e rede de confiança — `/api/usuarios`
+
+| Operação | Método | Rota |
+|---|---|---|
+| Create | POST | `/api/usuarios` |
+| Read | GET | `/api/usuarios` e `/api/usuarios/{id}` |
+| Update | PUT | `/api/usuarios/{id}` |
+| Alterar senha | PATCH | `/api/usuarios/{id}/senha` |
+| Delete | DELETE | `/api/usuarios/{id}` |
+| Contatos (CRUD) | GET, POST, PUT, DELETE | `/api/usuarios/{usuarioId}/contatos-confianca[/{contatoId}]` |
+
+PUT `/api/usuarios/{id}`:
+```json
+{
+  "nome": "Maria da Silva Souza",
+  "email": "maria@exemplo.com",
+  "telefone": "11987654321",
+  "perfil": "USUARIA",
+  "codigoBo": "BO-2026-000123",
+  "pinDisfarce": "1901",
+  "possuiMedidaProtetiva": true,
+  "permissaoMicrofone": true,
+  "permissaoLocalizacao": true,
+  "ativo": true
+}
+```
+
+POST `/api/usuarios/{usuarioId}/contatos-confianca`:
+```json
+{
+  "nome": "Ana Souza",
+  "telefone": "11912345678",
+  "email": "ana@exemplo.com",
+  "parentesco": "Irmã",
+  "notificarPorSms": true,
+  "notificarPorApp": true
+}
+```
 
 ### Alertas — `/api/alertas`
 
@@ -162,20 +258,23 @@ PUT:
 
 Consultas no banco (Query Editor do Azure SQL):
 ```sql
-SELECT * FROM dbo.Alertas ORDER BY Id DESC;
-SELECT * FROM dbo.AtualizacoesStatus ORDER BY Id DESC;
+SELECT * FROM dbo.TB_VALKY_USUARIOS ORDER BY ID DESC;
+SELECT * FROM dbo.TB_VALKY_CONTATOS_CONFIANCA ORDER BY ID DESC;
+SELECT * FROM dbo.TB_VALKY_ALERTAS ORDER BY ID DESC;
+SELECT * FROM dbo.TB_VALKY_ATUALIZACOES_STATUS ORDER BY ID DESC;
 ```
 
 ## Rodar localmente
 
 ```bash
 dotnet user-secrets init --project src/Valky.Api
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<sua-connection-string>" --project src/Valky.Api
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<connection-string-sql-server>" --project src/Valky.Api
+dotnet user-secrets set "Jwt:ChaveSecreta" "<chave-com-32-caracteres-ou-mais>" --project src/Valky.Api
 dotnet run --project src/Valky.Api
 dotnet test tests/Valky.Tests
 ```
 
-Os testes de integração usam a `WebApplicationFactory` com o provedor EF Core InMemory.
+Para usar Oracle localmente: `DatabaseProvider=Oracle` e `ConnectionStrings:OracleConnection` via user-secrets. Os testes de integração usam o ambiente `Testing`, com o provedor EF Core InMemory.
 
 ## Declaração de uso de IA generativa
 

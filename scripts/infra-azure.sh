@@ -9,7 +9,8 @@
 #   chmod +x scripts/infra-azure.sh
 #   ./scripts/infra-azure.sh
 #
-# A senha do SQL é pedida na execução (ou lida da variável de ambiente SQL_PASSWORD).
+# A senha do SQL e a chave do JWT são pedidas na execução
+# (ou lidas das variáveis de ambiente SQL_PASSWORD e JWT_KEY).
 # =====================================================================
 set -euo pipefail
 
@@ -29,6 +30,11 @@ RUNTIME="${RUNTIME:-DOTNETCORE:10.0}"
 
 if [ -z "${SQL_PASSWORD:-}" ]; then
   read -r -s -p "Defina a senha do administrador do SQL (min. 8 caracteres, maiúscula, minúscula, número e símbolo): " SQL_PASSWORD
+  echo
+fi
+
+if [ -z "${JWT_KEY:-}" ]; then
+  read -r -s -p "Defina a chave de assinatura do JWT (min. 32 caracteres): " JWT_KEY
   echo
 fi
 
@@ -106,7 +112,7 @@ az webapp config connection-string set \
 az webapp config appsettings set \
   --resource-group "$RESOURCE_GROUP" \
   --name "$WEBAPP" \
-  --settings ASPNETCORE_ENVIRONMENT=Production \
+  --settings ASPNETCORE_ENVIRONMENT=Production DatabaseProvider=SqlServer Jwt__ChaveSecreta="$JWT_KEY" \
   -o none
 
 if [ "$APP_SKU" != "F1" ]; then
